@@ -1,6 +1,6 @@
-## Version: v4.4.1
-## Date: 2021-05-13
-## Update Content: EnableTaskFinishShell=true时，给task_finish.sh增加一个参考文件的链接。
+## Version: v4.4.2
+## Date: 2021-05-22
+## Update Content: 移除 AutoHelpOther 选项，默认开启自动互助。
 
 ## ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 第一区域：jd_scripts特有变量填写区域（需要shell转换的） ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
@@ -76,12 +76,6 @@ RmLogDaysAgo="7"
 ## 在crontab.list中，在每小时第0-2分、第30-31分、第59分这几个时间内启动的任务，均算作必须准点运行的任务，在启动这些任务时，即使你定义了RandomDelay，也将准点运行，不启用随机延迟
 ## 在crontab.list中，除掉每小时上述时间启动的任务外，其他任务在你定义了 RandomDelay 的情况下，一律启用随机延迟，但如果你按照Wiki教程给某些任务添加了 "now"，那么这些任务也将无视随机延迟直接启动
 RandomDelay="300"
-
-## 自动按顺序进行账号间互助（选填）
-## 设置为 true 时，将直接导入 jcode 最新日志来进行互助，如希望不完全按照jcode 最新日志来互助，可以在config目录下新建sharecode.sh，内容参考jcode日志并按需修改，sharecode.sh赋值内容会覆盖jcode日志中同名变量
-## 如果启用了TempBlockCookie，那么只是被屏蔽的账号不助力其他账号，其他账号还是会助力被屏蔽的账号
-## 如不需要自动互助，请设置为false，并将jcode脚本输出日志粘贴在第三区域或粘贴在config/sharecode.sh中，并自行根据需要进行修改
-AutoHelpOther=""
 
 ## 定义 jcode 脚本导出的互助码模板样式（选填）
 ## 不填 使用“按编号顺序助力模板”，Cookie编号在前的优先助力
