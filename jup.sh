@@ -51,6 +51,7 @@ reset_remote_url () {
     if [ -d "$dir_work/.git" ]; then
         cd $dir_work
         git remote set-url origin $url >/dev/null
+        git reset --hard >/dev/null
         cd $dir_current
     fi
 }
@@ -429,11 +430,8 @@ update_shell () {
     ## 更新jup任务的cron
     random_update_jup_cron
 
-    ## 重置仓库romote url
-    if [[ $JD_DIR ]] && [[ $ENABLE_RESET_REPO_URL == true ]]; then
-        reset_remote_url $dir_shell $url_shell
-        reset_remote_url $dir_scripts $url_scripts
-    fi
+    ## 重置仓库
+    reset_remote_url $dir_shell $url_shell
 
     ## 记录bot程序md5
     jbot_md5sum_old=$(cd $dir_bot; find . -type f \( -name "*.py" -o -name "*.ttf" \) | xargs md5sum)
@@ -454,6 +452,10 @@ update_shell () {
 ## 更新scripts
 update_scripts () {
     echo -e "--------------------------------------------------------------\n"
+    
+    ## 重置仓库
+    reset_remote_url $dir_scripts $url_scripts
+
     ## 更新前先存储package.json和githubAction.md的内容
     [ -f $dir_scripts/package.json ] && scripts_depend_old=$(cat $dir_scripts/package.json)
     [ -f $dir_scripts/githubAction.md ] && cp -f $dir_scripts/githubAction.md $dir_list_tmp/githubAction.md
