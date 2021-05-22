@@ -43,7 +43,7 @@ random_update_jup_cron () {
 }
 
 ## 重置仓库remote url，docker专用，$1：要重置的目录，$2：要重置为的网址
-reset_romote_url () {
+reset_remote_url () {
     local dir_current=$(pwd)
     local dir_work=$1
     local url=$2
@@ -51,7 +51,6 @@ reset_romote_url () {
     if [ -d "$dir_work/.git" ]; then
         cd $dir_work
         git remote set-url origin $url >/dev/null
-        git reset --hard >/dev/null
         cd $dir_current
     fi
 }
@@ -359,7 +358,7 @@ update_own_repo () {
     [[ ${#array_own_repo_url[*]} -gt 0 ]] && echo -e "--------------------------------------------------------------\n"
     for ((i=0; i<${#array_own_repo_url[*]}; i++)); do
         if [ -d ${array_own_repo_path[i]}/.git ]; then
-            reset_romote_url ${array_own_repo_path[i]} ${array_own_repo_url[i]}
+            reset_remote_url ${array_own_repo_path[i]} ${array_own_repo_url[i]}
             git_pull_scripts ${array_own_repo_path[i]}
         else
             git_clone_scripts ${array_own_repo_url[i]} ${array_own_repo_path[i]} ${array_own_repo_branch[i]}
@@ -432,8 +431,8 @@ update_shell () {
 
     ## 重置仓库romote url
     if [[ $JD_DIR ]] && [[ $ENABLE_RESET_REPO_URL == true ]]; then
-        reset_romote_url $dir_shell $url_shell
-        reset_romote_url $dir_scripts $url_scripts
+        reset_remote_url $dir_shell $url_shell
+        reset_remote_url $dir_scripts $url_scripts
     fi
 
     ## 记录bot程序md5
@@ -444,7 +443,6 @@ update_shell () {
     if [[ $exit_status -eq 0 ]]; then
         echo -e "\n更新$dir_shell成功...\n"
         make_dir $dir_config
-        cp -f $file_config_sample $dir_config/config.sample.sh
         update_docker
         detect_config_version
     else
@@ -467,10 +465,10 @@ update_scripts () {
         git_clone_scripts $url_scripts $dir_scripts "master"
     fi
 
+    perl -i -pe "s|desp \+= author\;||g" $dir_scripts/sendNotify.js
+
     if [[ $exit_status -eq 0 ]]; then
         echo -e "\n更新$dir_scripts成功...\n"
-
-        perl -i -pe "s|desp \+= author\;||g" $dir_scripts/sendNotify.js
 
         ## npm install
         [ ! -d $dir_scripts/node_modules ] && npm_install_1 $dir_scripts
@@ -559,27 +557,8 @@ fix_crontab () {
     fi
 }
 
-## 在最开始的提醒
-start_notify () {
-    if [[ $JD_DIR ]] && [[ $(uname -m) == armv7* ]] && ! curl api.jd.com &>/dev/null; then
-        echo -e "检测到主机构架为armv7，并且无法访问网络，可能是未设置security-opt的原因...\n\n请按照 https://hub.docker.com/r/nevinee/jd 创建容器..."
-        echo -e "等待15秒后继续执行$cmd_jup...\n"
-        sleep 15
-    fi
-}
-
-## 在最后的提醒
-end_notify () {
-    if [[ $JD_DIR ]]; then
-        if [ -f /usr/local/bin/docker-entrypoint.sh ] && [ ! -d /etc/cont-init.d ] && [ ! -d /etc/services.d ]; then
-            notify "镜像更新通知" "Docker镜像的启动方式已从docker-entrypoint调整为s6-overlay，请更新镜像（无需更新配置文件），旧的镜像即将无法使用。" &>/dev/null
-        fi
-    fi
-}
-
 ## 主函数
 main () {
-    start_notify
     case $# in
         1)
             case $1 in
@@ -620,7 +599,6 @@ main () {
     esac
     fix_config
     fix_crontab
-    end_notify
     exit 0
 }
 
