@@ -212,7 +212,7 @@ detect_config_version () {
     if [ -f $file_config_user ] && [[ $ver_config_user != $ver_config_sample ]] && [[ $update_date == $(date "+%Y-%m-%d") ]]; then
         if [ ! -f $send_mark ]; then
             local notify_title="配置文件更新通知"
-            local notify_content="日期: $update_date\n版本: $ver_config_user --> $ver_config_sample\n更新内容: $update_content\n更新说明: 如需使用新功能，请手动将config.sample.sh的变化内容更新到config.sh中。本消息只在配置文件更新当天发送一次。\n"
+            local notify_content="日期: $update_date\n版本: $ver_config_user --> $ver_config_sample\n更新内容: $update_content\n\n如需更新请手动操作，仅更新当天通知一次!"
             echo -e $notify_content
             notify "$notify_title" "$notify_content"
             [[ $? -eq 0 ]] && echo $ver_config_sample > $send_mark
@@ -469,6 +469,8 @@ update_scripts () {
 
     if [[ $exit_status -eq 0 ]]; then
         echo -e "\n更新$dir_scripts成功...\n"
+
+        perl -i -pe "s|desp \+= author\;||g" $dir_scripts/sendNotify.js
 
         ## npm install
         [ ! -d $dir_scripts/node_modules ] && npm_install_1 $dir_scripts
