@@ -63,7 +63,7 @@ git_clone_scripts () {
     local branch=$3
     [[ $branch ]] && local cmd="-b $branch "
     echo -e "开始克隆仓库 $url 到 $dir\n"
-    git clone $cmd $url $dir
+    git clone --single-branch $cmd $url $dir
     exit_status=$?
 }
 
