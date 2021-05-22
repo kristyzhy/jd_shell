@@ -1,8 +1,6 @@
-## Version: v4.4.2
-## Date: 2021-05-22
-## Update Content: 移除 AutoHelpOther 选项，默认开启自动互助。
-
-## ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 第一区域：jd_scripts特有变量填写区域（需要shell转换的） ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+## Version: v4.4.3
+## Date: 2021-05-23
+## Update Content: 调整 config.sample.sh 配置模板全文格式。
 
 ## Cookie（必填，由脚本去export JD_COOKIE，无需在config.sh中export）
 ## 请依次填入每个用户的Cookie，Cookie的具体形式（只有pt_key字段和pt_pin字段，没有其他字段）：pt_key=xxxxxxxxxx;pt_pin=xxxx;
@@ -12,34 +10,6 @@ Cookie2=""
 ## 每日签到的通知形式（选填，JD_BEAN_SIGN_STOP_NOTIFY和JD_BEAN_SIGN_NOTIFY_SIMPLE，由脚本去export，无需在config.sh中export）
 ## js脚本每日签到提供3种通知方式，分别为：关闭通知，请填入0；简洁通知，请填入1；长通知，请填入2
 NotifyBeanSign=""
-
-## ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 第一区域：jd_scripts脚本特有变量填写区域（需要shell转换的） ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
-
-## ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 第二区域：jd_scripts特有变量填写区域（不需要shell转换的） ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
-## 请在本区域补充其他你需要用到变量，export 变量名="变量值"，或：export 变量名='变量值'
-## 创建容器后在容器内运行 cat /jd/scripts/githubAction.md ，或访问 https://github.com/wisz2021/jd_docker/blob/main/githubAction.md 可查看环境变量清单
-## 该链接中除JD_COOKIE、JD_BEAN_SIGN_STOP_NOTIFY、JD_BEAN_SIGN_NOTIFY_SIMPLE这三个变量以及所有互助码类变量外，其他所有变量请在本区域自行补充
-
-
-## ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 第二区域：jd_scripts脚本特有变量填写区域（不需要shell转换的） ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
-
-## ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 第三区域：互助码填写区域 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
-## 所有互助码活动，请在运行过一次需要互助的活动脚本以后，再运行一次jcode即可获取，将jcode的输出内容粘贴在本区域中即可，或粘贴在config/sharecode.sh中
-## 如想在运行互助活动脚本时直接从jcode中自动获取互助码并进行互助，请将第四区域中 AutoHelpOther 设置为true
-## 当 AutoHelpOther 设置为 true 时，jtask会先导入jcode最新日志，再导入config/sharecode.sh，如果你希望不完全按照jcode日志内容进行互助，你可以按需要修改config/sharecode.sh，config/sharecode.sh赋值内容会覆盖jcode日志中同名变量
-
-
-## ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 第三区域：互助码填写区域 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
-
-## ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 第四区域：本shell脚本特有变量填写区域 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
 ## 临时屏蔽某个Cookie（选填）
 ## 如果某些Cookie已经失效了，但暂时还没法更新，可以使用此功能在不删除该Cookie和重新修改Cookie编号的前提下，临时屏蔽掉某些编号的Cookie
@@ -145,13 +115,8 @@ AutoAddOwnCron="true"
 ## 本shell脚本不一定能完全从js脚本中识别出有效的cron设置，如果发现不能满足你的需要，请设置为 "false" 以取消自动删除。
 AutoDelOwnCron="true"
 
-## ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 第四区域：本shell脚本特有变量填写区域 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+## 请在下方补充其他你需要用到变量，包括 jd_scripts 脚本集的和其他你拉取的脚本的环境变量，export 变量名="变量值"，或：export 变量名='变量值'
+## 创建容器后在容器内运行 cat /jd/scripts/githubAction.md ，或访问 https://github.com/wisz2021/jd_docker/blob/main/githubAction.md 可查看 jd_scripts 的环境变量清单
+## jd_scripts 的环境变量中除 JD_COOKIE、JD_BEAN_SIGN_STOP_NOTIFY、JD_BEAN_SIGN_NOTIFY_SIMPLE 这三个变量以及所有互助码类变量外，其他所有变量请在下方自行补充
 
-
-## ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 第五区域：额外的环境变量填写区域 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
-## 请在以下补充你需要用到的额外的环境变量，形式：export 变量名="变量值"，或：export 变量名='变量值'
-
-
-## ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 第五区域：额外的环境变量填写区域 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
