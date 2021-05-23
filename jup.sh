@@ -544,7 +544,7 @@ update_own () {
 
 ## 调用用户自定义的diy.sh
 source_diy () {
-    if [[ ${EnableExtraShell} == true || ${EnableJupDiyShell} == true ]]; then
+    if [[ ${EnableJupDiyShell} == true ]]; then
         echo -e "==========================\n"
         if [ -f $file_diy_shell ]
         then
