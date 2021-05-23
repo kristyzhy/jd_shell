@@ -212,7 +212,7 @@ detect_config_version () {
     if [ -f $file_config_user ] && [[ $ver_config_user != $ver_config_sample ]] && [[ $update_date == $(date "+%Y-%m-%d") ]]; then
         if [ ! -f $send_mark ]; then
             local notify_title="配置文件更新通知"
-            local notify_content="日期: $update_date\n版本: $ver_config_user --> $ver_config_sample\n更新内容: $update_content\n\n如需更新请手动操作，仅更新当天通知一次!"
+            local notify_content="日期: $update_date\n版本: $ver_config_user -> $ver_config_sample\n内容: $update_content\n\n如需更新请手动操作，仅更新当天通知一次!"
             echo -e $notify_content
             notify "$notify_title" "$notify_content"
             [[ $? -eq 0 ]] && echo $ver_config_sample > $send_mark
@@ -356,7 +356,7 @@ add_cron_notify () {
 
 ## 更新 own 所有仓库
 update_own_repo () {
-    [[ ${#array_own_repo_url[*]} -gt 0 ]] && echo -e "--------------------------------------------------------------\n"
+    [[ ${#array_own_repo_url[*]} -gt 0 ]] && echo -e "==========================\n"
     for ((i=0; i<${#array_own_repo_url[*]}; i++)); do
         if [ -d ${array_own_repo_path[i]}/.git ]; then
             reset_remote_url ${array_own_repo_path[i]} ${array_own_repo_url[i]}
@@ -371,7 +371,7 @@ update_own_repo () {
 ## 更新 own 所有 raw 文件
 update_own_raw () {
     local rm_mark
-    [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "--------------------------------------------------------------\n"
+    [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "==========================\n"
     for ((i=0; i<${#OwnRawFile[*]}; i++)); do
         raw_file_name[$i]=$(echo ${OwnRawFile[i]} | awk -F "/" '{print $NF}')
         echo -e "开始下载：${OwnRawFile[i]} \n\n保存路径：$dir_raw/${raw_file_name[$i]}\n"
@@ -401,7 +401,7 @@ update_own_raw () {
 usage () {
     define_cmd
     echo "使用帮助："
-    echo "$cmd_jup         # 更新所有脚本，如启用了EnbaleExtraShell将在最后运行你自己的diy.sh"
+    echo "$cmd_jup         # 更新所有脚本，如启用了EnableJupDiyShell将在最后运行你自己的diy.sh"
     echo "$cmd_jup all     # 更新所有脚本，效果同不带参数直接运行\"$cmd_jup\""
     echo "$cmd_jup shell   # 只更新jd_shell脚本，不会运行diy.sh"
     echo "$cmd_jup scripts # 只更新jd_scripts脚本，不会运行diy.sh"
@@ -412,7 +412,7 @@ usage () {
 ## 在日志中记录时间与路径
 record_time () {
     echo "
---------------------------------------------------------------
+==========================
 
 系统时间：$(date "+%Y-%m-%d %H:%M:%S")
 
@@ -426,7 +426,7 @@ own脚本目录：$dir_own
 
 ## 更新shell
 update_shell () {
-    echo -e "--------------------------------------------------------------\n"
+    echo -e "==========================\n"
     ## 更新jup任务的cron
     random_update_jup_cron
 
@@ -457,7 +457,7 @@ update_shell () {
 
 ## 更新scripts
 update_scripts () {
-    echo -e "--------------------------------------------------------------\n"
+    echo -e "==========================\n"
     
     ## 重置仓库
     reset_remote_url $dir_scripts $url_scripts
@@ -545,7 +545,7 @@ update_own () {
 ## 调用用户自定义的diy.sh
 source_diy () {
     if [[ ${EnableExtraShell} == true || ${EnableJupDiyShell} == true ]]; then
-        echo -e "--------------------------------------------------------------\n"
+        echo -e "==========================\n"
         if [ -f $file_diy_shell ]
         then
             echo -e "开始执行$file_diy_shell...\n"
