@@ -20,6 +20,12 @@ run_config () {
         echo
     fi
 
+    if [ ! -s $JD_DIR/config/auth.json ]; then
+        echo -e "检测到 $JD_DIR/config/auth.json 不存在，生成一份用于初始化...\n"
+        echo '{"user":"admin","password":"123456"}' > $JD_DIR/config/auth.json
+        echo
+    fi
+
     if [[ $ENABLE_TG_BOT == true ]] && [ ! -s $JD_DIR/config/bot.json ] && type python3 &>/dev/null; then
         echo -e "检测到 $JD_DIR/config/bot.json 不存在，从示例文件复制一份用于初始化...\n"
         cp -fv $JD_DIR/sample/bot.sample.json $JD_DIR/config/bot.json

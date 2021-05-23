@@ -435,11 +435,17 @@ update_shell () {
 
     ## 记录bot程序md5
     jbot_md5sum_old=$(cd $dir_bot; find . -type f \( -name "*.py" -o -name "*.ttf" \) | xargs md5sum)
-
+    
+    ## 更新前先存储面板package.json的内容
+    [ -f $dir_panel/package.json ] && panel_depend_old=$(cat $dir_panel/package.json)
+    
     ## 更新shell
     git_pull_scripts $dir_shell
     if [[ $exit_status -eq 0 ]]; then
         echo -e "\n更新$dir_shell成功...\n"
+        [ ! -d $dir_panel/node_modules ] && npm_install_1 $dir_panel
+        [ -f $dir_panel/package.json ] && panel_depend_new=$(cat $dir_panel/package.json)
+        [[ "$panel_depend_old" != "$panel_depend_new" ]] && npm_install_2 $dir_panel
         make_dir $dir_config
         update_docker
         detect_config_version

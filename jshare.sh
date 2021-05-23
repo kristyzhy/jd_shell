@@ -1,6 +1,7 @@
 ## 目录
 dir_config=$dir_root/config
 dir_scripts=$dir_root/scripts
+dir_panel=$dir_root/jpanel
 dir_bot=$dir_root/jbot
 dir_own=$dir_root/own
 dir_raw=$dir_own/raw
