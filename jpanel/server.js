@@ -762,6 +762,19 @@ app.get('/api/scripts/:dir/:file', function (request, response) {
 
 });
 
+/**
+ * 返回空数据，用于拒绝给共享池助力
+ */
+app.get('/api/null', function (request, response) {
+    let content = {
+            "code": 200,
+            "message": "",
+            "data": [],
+            "powered by": "Task"
+    };
+    response.setHeader("Content-Type", "application/json");
+    response.send(content);
+});
 
 checkConfigFile()
 
