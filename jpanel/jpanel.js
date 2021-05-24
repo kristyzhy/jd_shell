@@ -38,8 +38,6 @@ var botFile = path.join(rootPath, 'config/bot.json');
 var shortCutFile = path.join(rootPath, 'config/shortcut.list');
 // 日志目录
 var logPath = path.join(rootPath, 'log/');
-// 脚本目录
-var ScriptsPath = path.join(rootPath, 'scripts/');
 
 var authError = "错误的用户名密码，请重试";
 var loginFaild = "请先登录!";
@@ -662,85 +660,6 @@ app.get('/api/logs/:dir/:file', function (request, response) {
             filePath = logPath + request.params.file;
         } else {
             filePath = logPath + request.params.dir + '/' + request.params.file;
-        }
-        var content = getFileContentByName(filePath);
-        response.setHeader("Content-Type", "text/plain");
-        response.send(content);
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-
-/**
- * 查看脚本 页面
- */
-app.get('/viewscripts', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/viewscripts.html'));
-    } else {
-        response.redirect('/');
-    }
-});
-
-/**
- * 脚本列表
- */
-app.get('/api/scripts', function (request, response) {
-    if (request.session.loggedin) {
-        var fileList = fs.readdirSync(ScriptsPath, 'utf-8');
-        var dirs = [];
-        var rootFiles = [];
-        var excludeRegExp = /(git)|(node_modules)|(icon)/;
-        for (var i = 0; i < fileList.length; i++) {
-            var stat = fs.lstatSync(ScriptsPath + fileList[i]);
-            // 是目录，需要继续
-            if (stat.isDirectory()) {
-                var fileListTmp = fs.readdirSync(ScriptsPath + '/' + fileList[i], 'utf-8');
-                fileListTmp.reverse();
-
-                if (excludeRegExp.test(fileList[i])) {
-                    continue;
-                }
-                
-                var dirMap = {
-                    dirName: fileList[i],
-                    files: fileListTmp
-                }
-                dirs.push(dirMap);
-            } else {
-                if (excludeRegExp.test(fileList[i])) {
-                    continue;
-                }
-                
-                rootFiles.push(fileList[i]);
-            }
-        }
-
-        dirs.push({
-            dirName: '@',
-            files: rootFiles
-        });
-        var result = { dirs };
-        response.send(result);
-
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * 脚本文件
- */
-app.get('/api/scripts/:dir/:file', function (request, response) {
-    if (request.session.loggedin) {
-        let filePath;
-        if (request.params.dir === '@') {
-            filePath = ScriptsPath + request.params.file;
-        } else {
-            filePath = ScriptsPath + request.params.dir + '/' + request.params.file;
         }
         var content = getFileContentByName(filePath);
         response.setHeader("Content-Type", "text/plain");
