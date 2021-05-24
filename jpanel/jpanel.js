@@ -46,6 +46,7 @@ var configString = "config crontab sharecode diy taskfinish bot shortcut";
 
 var s_token, cookies, guid, lsid, lstoken, okl_token, token, userCookie = ""
 
+
 function praseSetCookies(response) {
     s_token = response.body.s_token
     guid = response.headers['set-cookie'][0]
@@ -178,8 +179,6 @@ async function checkLogin() {
     }
 }
 
-
-
 /**
  * 检查 config/bak/ 备份目录是否存在，不存在则创建
  */
@@ -304,7 +303,6 @@ function getLastModifyFilePath(dir) {
     return filePath;
 }
 
-
 var app = express();
 // gzip压缩
 app.use(compression({ level: 6, filter: shouldCompress }));
@@ -329,8 +327,9 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 /**
- * 登录页面
+ * 登录 页面
  */
 app.get('/', function (request, response) {
     if (request.session.loggedin) {
@@ -341,7 +340,95 @@ app.get('/', function (request, response) {
 });
 
 /**
- * 用户名密码
+ * 首页（配置设定） 页面
+ */
+ app.get('/home', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/home.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * 定时任务 页面
+ */
+app.get('/crontab', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/crontab.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * 互助规则 页面
+ */
+app.get('/sharecode', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/sharecode.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * jup拓展 页面
+ */
+app.get('/diy', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/diy.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * jtask拓展 页面
+ */
+ app.get('/taskfinish', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/taskfinish.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * bot配置 页面
+ */
+ app.get('/bot', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/bot.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * bot快捷功能 页面
+ */
+ app.get('/shortcut', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/shortcut.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * 日志查询 页面
+ */
+ app.get('/log', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/tasklog.html'));
+    } else {
+        response.redirect('/');
+    }
+});
+
+/**
+ * 修改密码 页面
  */
 app.get('/changepwd', function (request, response) {
     if (request.session.loggedin) {
@@ -351,11 +438,42 @@ app.get('/changepwd', function (request, response) {
     }
 });
 
-/**
- * 获取二维码链接
- */
 
-app.get('/qrcode', function (request, response) {
+/**
+ * 登录认证 API
+ */
+ app.post('/api/auth', function (request, response) {
+    let username = request.body.username;
+    let password = request.body.password;
+    fs.readFile(authConfigFile, 'utf8', function (err, data) {
+        if (err) console.log(err);
+        var con = JSON.parse(data);
+        if (username && password) {
+            if (username == con.user && password == con.password) {
+                request.session.loggedin = true;
+                request.session.username = username;
+                response.send({ err: 0 });
+            } else {
+                response.send({ err: 1, msg: authError });
+            }
+        } else {
+            response.send({ err: 1, msg: "请输入用户名密码!" });
+        }
+    });
+});
+
+/**
+ * 退出登录 API
+ */
+ app.get('/api/logout', function (request, response) {
+    request.session.destroy()
+    response.redirect('/');
+});
+
+/**
+ * 获取二维码链接 API
+ */
+app.get('/api/qrcode', function (request, response) {
     if (request.session.loggedin) {
         (async () => {
             try {
@@ -376,10 +494,9 @@ app.get('/qrcode', function (request, response) {
 })
 
 /**
- * 获取返回的cookie信息
+ * 获取返回的 Cookie 信息 API
  */
-
-app.get('/cookie', function (request, response) {
+app.get('/api/cookie', function (request, response) {
     if (request.session.loggedin && cookies != "") {
         (async () => {
             try {
@@ -400,9 +517,8 @@ app.get('/cookie', function (request, response) {
 })
 
 /**
- * 获取各种配置文件api
+ * 获取各种配置文件 API
  */
-
 app.get('/api/config/:key', function (request, response) {
     if (request.session.loggedin) {
         if (configString.indexOf(request.params.key) > -1) {
@@ -442,153 +558,7 @@ app.get('/api/config/:key', function (request, response) {
 })
 
 /**
- * 首页 配置设定 页面
- */
-app.get('/home', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/home.html'));
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * 定时任务 页面
- */
-app.get('/crontab', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/crontab.html'));
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * 互助规则 页面
- */
-app.get('/sharecode', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/sharecode.html'));
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * jup拓展脚本 页面
- */
-app.get('/diy', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/diy.html'));
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * jtask拓展脚本 页面
- */
- app.get('/taskfinish', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/taskfinish.html'));
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * bot配置 页面
- */
- app.get('/bot', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/bot.html'));
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * bot快捷功能 页面
- */
- app.get('/shortcut', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/shortcut.html'));
-    } else {
-        response.redirect('/');
-    }
-
-});
-
-/**
- * auth
- */
-app.post('/auth', function (request, response) {
-    let username = request.body.username;
-    let password = request.body.password;
-    fs.readFile(authConfigFile, 'utf8', function (err, data) {
-        if (err) console.log(err);
-        var con = JSON.parse(data);
-        if (username && password) {
-            if (username == con.user && password == con.password) {
-                request.session.loggedin = true;
-                request.session.username = username;
-                response.send({ err: 0 });
-            } else {
-                response.send({ err: 1, msg: authError });
-            }
-        } else {
-            response.send({ err: 1, msg: "请输入用户名密码!" });
-        }
-    });
-
-});
-
-/**
- * change pwd
- */
-app.post('/changepass', function (request, response) {
-    if (request.session.loggedin) {
-        let username = request.body.username;
-        let password = request.body.password;
-        let config = {
-            user: username,
-            password: password
-        }
-        if (username && password) {
-            fs.writeFile(authConfigFile, JSON.stringify(config), function (err) {
-                if (err) {
-                    response.send({ err: 1, msg: "更新出错请重试!" });
-                } else {
-                    response.send({ err: 0, msg: "更新成功!" });
-                }
-            });
-        } else {
-            response.send({ err: 1, msg: "请输入用户名密码!" });
-        }
-
-    } else {
-        response.send(loginFaild);
-
-    }
-});
-
-/**
- * change pwd
- */
-app.get('/logout', function (request, response) {
-    request.session.destroy()
-    response.redirect('/');
-
-});
-
-/**
- * save config
+ * 保存文件 API
  */
 app.post('/api/save', function (request, response) {
     if (request.session.loggedin) {
@@ -599,22 +569,10 @@ app.post('/api/save', function (request, response) {
     } else {
         response.send({ err: 1, title: "保存失败! ", msg: loginFaild });
     }
-
 });
 
 /**
- * 日志查询 页面
- */
-app.get('/log', function (request, response) {
-    if (request.session.loggedin) {
-        response.sendFile(path.join(__dirname + '/public/tasklog.html'));
-    } else {
-        response.redirect('/');
-    }
-});
-
-/**
- * 日志列表
+ * 日志列表 API
  */
 app.get('/api/logs', function (request, response) {
     if (request.session.loggedin) {
@@ -647,11 +605,10 @@ app.get('/api/logs', function (request, response) {
     } else {
         response.redirect('/');
     }
-
 });
 
 /**
- * 日志文件
+ * 日志文件 API
  */
 app.get('/api/logs/:dir/:file', function (request, response) {
     if (request.session.loggedin) {
@@ -667,11 +624,39 @@ app.get('/api/logs/:dir/:file', function (request, response) {
     } else {
         response.redirect('/');
     }
-
 });
 
 /**
- * 返回空数据，用于拒绝给共享池助力
+ * 修改密码 API
+ */
+ app.post('/api/changepass', function (request, response) {
+    if (request.session.loggedin) {
+        let username = request.body.username;
+        let password = request.body.password;
+        let config = {
+            user: username,
+            password: password
+        }
+        if (username && password) {
+            fs.writeFile(authConfigFile, JSON.stringify(config), function (err) {
+                if (err) {
+                    response.send({ err: 1, msg: "更新出错请重试!" });
+                } else {
+                    response.send({ err: 0, msg: "更新成功!" });
+                }
+            });
+        } else {
+            response.send({ err: 1, msg: "请输入用户名密码!" });
+        }
+
+    } else {
+        response.send(loginFaild);
+
+    }
+});
+
+/**
+ * 返回空数据 API
  */
 app.get('/api/null', function (request, response) {
     let content = {

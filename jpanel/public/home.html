@@ -32,7 +32,7 @@
                     <li><a href="./shortcut">bot快捷功能</a></li>
                     <li><a href="./log">日志查询</a></li>
                     <li><a href="./changepwd">修改密码</a></li>
-                    <li><a href="./logout">退出登录</a></li>
+                    <li><a href="./api/logout">退出登录</a></li>
                 </ul>
             </nav>
             <header>
@@ -122,7 +122,7 @@
 
             function checkLogin() {
                 var timeId = setInterval(() => {
-                    $.get('./cookie', function (data) {
+                    $.get('./api/cookie', function (data) {
                         if (data.err == 0) {
                             clearInterval(timeId);
                             $("#qrcontainer").addClass("hidden");
@@ -176,7 +176,7 @@
             }
 
             function get_code() {
-                $.get('./qrcode', function (data) {
+                $.get('./api/qrcode', function (data) {
                     if (data.err == 0) {
                         $("#qrcontainer").removeClass("hidden")
                         $("#refresh_qrcode").addClass("hidden")

@@ -24,7 +24,7 @@
                     <li><a href="./shortcut">bot快捷功能</a></li>
                     <li><a href="./log">日志查询</a></li>
                     <li class="active"><a href="./changepwd">修改密码</a></li>
-                    <li><a href="./logout">退出登录</a></li>
+                    <li><a href="./api/logout">退出登录</a></li>
                 </ul>
             </nav>
             <div class="login-form">
@@ -45,7 +45,7 @@
             $password = $(".password").val();
             if (!$user || !$password) return;
 
-            $.post('./changepass', { username: $user, password: $password }, function (data) {
+            $.post('./api/changepass', { username: $user, password: $password }, function (data) {
                 let icon = (data.err == 0) ? "success" : "error"
                 Swal.fire({
                     text: data.msg,
