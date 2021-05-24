@@ -183,16 +183,6 @@ async function checkLogin() {
 
 
 /**
- * 检查 config.sh 文件是否存在
- */
-function checkConfigFile() {
-    if (!fs.existsSync(confFile)) {
-        console.error('脚本启动失败，config.sh 文件不存在！');
-        process.exit(1);
-    }
-}
-
-/**
  * 检查 config/bak/ 备份目录是否存在，不存在则创建
  */
 function mkdirConfigBakDir() {
@@ -234,7 +224,7 @@ function bakConfFile(file) {
             oldConfContent = getFileContentByName(botFile);
             fs.writeFileSync(bakConfFile, oldConfContent);
             break;
-            case "shortcut.list":
+        case "shortcut.list":
             oldConfContent = getFileContentByName(shortCutFile);
             fs.writeFileSync(bakConfFile, oldConfContent);
             break;
@@ -602,7 +592,6 @@ app.get('/logout', function (request, response) {
 /**
  * save config
  */
-
 app.post('/api/save', function (request, response) {
     if (request.session.loggedin) {
         let postContent = request.body.content;
@@ -776,7 +765,6 @@ app.get('/api/null', function (request, response) {
     response.send(content);
 });
 
-checkConfigFile()
 
 app.listen(5678, () => {
     console.log('面板启动，正在监听 5678 端口!');

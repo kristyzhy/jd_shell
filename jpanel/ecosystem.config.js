@@ -1,9 +1,9 @@
 module.exports = {
   apps: [
     { 
-      name: 'server',
-      script: './server.js',
-      watch: ['server.js'],
+      name: 'jpanel',
+      script: './jpanel.js',
+      watch: ['jpanel.js'],
       // Delay between restart
       watch_delay: 2000,
       ignore_watch: ['node_modules', 'public'],
