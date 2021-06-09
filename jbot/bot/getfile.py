@@ -11,8 +11,8 @@ async def myfile(event):
     try:
         v4btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), Button.inline('放入OWN文件夹', data=_DiyDir)], [
             Button.inline('放入scripts并运行', data='node1'), Button.inline('放入OWN并运行', data='node'), Button.inline('取消', data='cancel')]]
-        btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), [
-            Button.inline('放入scripts并运行', data='node1'), Button.inline('取消', data='cancel')]]]
+        btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir)], [
+            Button.inline('放入scripts并运行', data='node1'), Button.inline('取消', data='cancel')]]
         SENDER = event.sender_id
         if event.message.file:
             markup = []
@@ -40,8 +40,11 @@ async def myfile(event):
                 elif res == 'node1':
                     await backfile(_ScriptsDir+'/'+filename)
                     await jdbot.download_media(event.message, _ScriptsDir)
-                    cmdtext = '{} {}/{} now'.format(jdcmd,
+                    if V4:
+                        cmdtext = '{} {}/{} now'.format(jdcmd,
                                                     _ScriptsDir, filename)
+                    else:
+                        cmdtext = '{} {} now'.format(jdcmd, filename)
                     subprocess.Popen(
                         cmdtext, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     await jdbot.edit_message(msg, '脚本已保存到scripts文件夹，并成功在后台运行，请稍后自行查看日志')
