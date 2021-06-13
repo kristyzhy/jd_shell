@@ -11,5 +11,5 @@ async def setshortcut(event):
         shortcut = await conv.get_response()
         with open(_shortcut, 'w+', encoding='utf-8') as f:
             f.write(shortcut.raw_text)
-        await conv.send_message('已设置成功可通过"/a"使用')
+        await conv.send_message('已设置成功可通过"/a或/b"使用')
         conv.cancel()
