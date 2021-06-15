@@ -120,7 +120,7 @@ async def mycookie(event):
         async with jdbot.conversation(SENDER, timeout=30) as conv:
             getSToken()
             getOKLToken()
-            url = f'https://plogin.m.jd.com/cgi-bin/m/tmauth?appid=300&client_type=m&token={token}'
+            url = 'https://plogin.m.jd.com/cgi-bin/m/tmauth?appid=300&client_type=m&token='+token
             creatqr(url)
             markup = [Button.inline("已扫码", data='confirm'),
                       Button.inline("取消", data='cancel')]
@@ -166,11 +166,11 @@ async def mycookie(event):
                 return
             if data.get("errcode") == 21:
                 await jdbot.delete_messages(chat_id, cookiemsg)
-                await jdbot.send_message(chat_id, f'发生了某些错误\n{data.get("errcode")}')
+                await jdbot.send_message(chat_id, '发生了某些错误\n'+data.get("errcode"))
                 return
             if time.time() > expired_time:
                 await jdbot.delete_messages(chat_id, cookiemsg)
                 await jdbot.send_message(chat_id, '超过3分钟未扫码，二维码已过期')
                 return
     except Exception as e:
-        await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
+        await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n'+str(e))

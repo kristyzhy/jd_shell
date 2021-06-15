@@ -2,7 +2,7 @@ from telethon import events
 from .. import jdbot, chat_id, _LogDir, logger
 from ..bot.quickchart import QuickChart
 from .beandata import get_bean_data
-_botimg = f'{_LogDir}/bot/bean.jpeg'
+_botimg = _LogDir + '/bot/bean.jpeg'
 
 @jdbot.on(events.NewMessage(chats=chat_id, pattern=r'^/chart'))
 async def mybean(event):
@@ -15,16 +15,16 @@ async def mybean(event):
         if text and int(text):
             beanin, beanout, beanstotal, date = get_bean_data(int(text))
             if not beanout:
-                await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(beanin)}')
+                await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n'+str(beanin))
             else:
-                creat_chart(date, f'账号{str(text)}',
+                creat_chart(date, '账号'+str(text),
                             beanin, beanout, beanstotal[1:])
                 await jdbot.send_message(chat_id, f'您的账号{text}收支情况', file=_botimg)
         else:
             await jdbot.send_message(chat_id, '请正确使用命令\n/chart n n为第n个账号')
     except Exception as e:
-        await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
-        logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+        await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n'+str(e))
+        logger.error('something wrong,I\'m sorry'+str(e))
 
 
 def creat_chart(xdata, title, bardata, bardata2, linedate):
@@ -94,7 +94,7 @@ def creat_chart(xdata, title, bardata, bardata2, linedate):
             },
             "title": {
                 "display": True,
-                "text": f'{title}   收支情况',
+                "text": title + "   收支情况",
                 "fontSize": 24,
             },
             "scales": {

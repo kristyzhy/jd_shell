@@ -4,13 +4,13 @@ import time
 import json
 from datetime import timedelta
 from datetime import timezone
-from .utils import _ConfigFile, myck
+from .utils import cookies
 SHA_TZ = timezone(
     timedelta(hours=8),
     name='Asia/Shanghai',
 )
 
-cookies = myck(_ConfigFile)
+
 session = requests.session()
 
 
@@ -102,7 +102,7 @@ def get_bean_data(i):
     beansin, beansout, _7days = getbeans(ck)
     beantotal = getTotal(ck)
     if not beansout:
-        return str(beansin), None, None, None
+        return str(beansin), None, None,None
     else:
         beanin, beanout = [], []
         beanstotal = [int(beantotal), ]

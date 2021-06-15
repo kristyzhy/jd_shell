@@ -2,8 +2,8 @@ from telethon import events, Button
 import os
 import shutil
 from asyncio import exceptions
-from .. import jdbot, chat_id, _JdDir, mybot
-from .utils import split_list, logger, press_event
+from .. import jdbot, chat_id, _JdDir
+from .utils import split_list, logger,press_event
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='/edit'))
@@ -13,17 +13,17 @@ async def myfileup(event):
     path = _JdDir
     page = 0
     if len(event.raw_text.split(' ')) > 1:
-        text = event.raw_text.replace('/edit ', '')
+        text = event.raw_text.replace('/edit ','')
     else:
-        text = None
+        text =None
     if text and os.path.isfile(text):
         try:
-            with open(text, 'r', encoding='utf-8') as f:
+            with open(text,'r',encoding='utf-8') as f:
                 lines = f.readlines()
                 filelist = split_list(lines, 15)
                 path = text
         except Exception as e:
-            await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
+            await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n'+str(e))
     elif text and os.path.isdir(text):
         path = text
         filelist = None
@@ -60,7 +60,7 @@ async def myedit(conv, SENDER, path, msg, page, filelist):
                 dir.sort()
                 markup = [Button.inline(file, data=str(
                     file)) for file in dir]
-                markup = split_list(markup, int(mybot['每页列数']))
+                markup = split_list(markup, 3)
                 if len(markup) > 30:
                     markup = split_list(markup, 30)
                     newmarkup = markup[page]
@@ -112,26 +112,26 @@ async def myedit(conv, SENDER, path, msg, page, filelist):
             markup[page] = resp.raw_text.split('\n')
             for a in range(len(markup[page])):
                 markup[page][a] = markup[page][a]+'\n'
-            shutil.copy(path, f'{path}.bak')
+            shutil.copy(path, path+'.bak')
             with open(path, 'w+', encoding='utf-8') as f:
                 markup = ["".join(a) for a in markup]
                 f.writelines(markup)
-            await jdbot.send_message(chat_id, f'文件已修改成功，原文件备份为{path}.bak')
+            await jdbot.send_message(chat_id, '文件已修改成功，原文件备份为'+path+'.bak')
             conv.cancel()
             return None, None, None, None
-        elif os.path.isfile(f'{path}/{res}'):
+        elif os.path.isfile(path+'/'+res):
             msg = await jdbot.edit_message(msg, '文件读取中...请稍候')
-            with open(f'{path}/{res}', 'r', encoding='utf-8') as f:
+            with open(path+'/'+res, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
             lines = split_list(lines, 15)
             page = 0
-            return f'{path}/{res}', msg, page, lines
+            return path+'/'+res, msg, page, lines
         else:
-            return f'{path}/{res}', msg, page, None
+            return path+'/'+res, msg, page, None
     except exceptions.TimeoutError:
         msg = await jdbot.edit_message(msg, '选择已超时，本次对话已停止')
         return None, None, None, None
     except Exception as e:
-        msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
-        logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+        msg = await jdbot.edit_message(msg, 'something wrong,I\'m sorry\n'+str(e))
+        logger.error('something wrong,I\'m sorry\n'+str(e))
         return None, None, None, None

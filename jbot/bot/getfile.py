@@ -1,7 +1,8 @@
 from telethon import events, Button
+import subprocess
 from asyncio import exceptions
 from .. import jdbot, chat_id, _ScriptsDir, _ConfigDir, logger
-from .utils import press_event, backfile, _DiyDir, jdcmd, V4, cronup, cmd
+from .utils import press_event, backfile, _DiyDir, jdcmd, V4
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id))
@@ -16,7 +17,6 @@ async def myfile(event):
         if event.message.file:
             markup = []
             filename = event.message.file.name
-            cmdtext = None
             async with jdbot.conversation(SENDER, timeout=30) as conv:
                 msg = await conv.send_message('请选择您要放入的文件夹或操作：\n')
                 if V4:
@@ -26,50 +26,40 @@ async def myfile(event):
                 msg = await jdbot.edit_message(msg, '请选择您要放入的文件夹或操作：', buttons=markup)
                 convdata = await conv.wait_event(press_event(SENDER))
                 res = bytes.decode(convdata.data)
-                markup = [Button.inline('是', data='yes'),
-                          Button.inline('否', data='no')]
                 if res == 'cancel':
                     msg = await jdbot.edit_message(msg, '对话已取消')
                     conv.cancel()
-                else:
-                    msg = await jdbot.edit_message(msg, '是否尝试自动加入定时', buttons=markup)
-                    convdata2 = await conv.wait_event(press_event(SENDER))
-                    res2 = bytes.decode(convdata2.data)
-                    if res == 'node':
-                        backfile(f'{_DiyDir}/{filename}')
-                        await jdbot.download_media(event.message, _DiyDir)
-                        cmdtext = f'{jdcmd} {_DiyDir}/{filename} now'
-                        with open(f'{_DiyDir}/{filename}', 'r', encoding='utf-8') as f:
-                            resp = f.read()
-                        if res2 == 'yes':
-                            await cronup(jdbot, conv, resp, filename, msg, SENDER, markup, _DiyDir)
-                        else:
-                            await jdbot.edit_message(msg, '脚本已保存到DIY文件夹，并成功运行')
-                        conv.cancel()
-                    elif res == 'node1':
-                        backfile(f'{_ScriptsDir}/{filename}')
-                        await jdbot.download_media(event.message, _ScriptsDir)
-                        with open(f'{_ScriptsDir}/{filename}', 'r', encoding='utf-8') as f:
-                            resp = f.read()
-                        cmdtext = f'{jdcmd} {_ScriptsDir}/{filename} now'
-                        if res2 == 'yes':
-                            await cronup(jdbot, conv, resp, filename, msg, SENDER, markup, _ScriptsDir)
-                        else:
-                            await jdbot.edit_message(msg, '脚本已保存到SCRIPTS文件夹，并成功运行')
-                        conv.cancel()
+                elif res == 'node':
+                    await backfile(_DiyDir+'/'+filename)
+                    await jdbot.download_media(event.message, _DiyDir)
+                    cmdtext = '{} {}/{} now'.format(jdcmd, _DiyDir, filename)
+                    subprocess.Popen(
+                        cmdtext, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    await jdbot.edit_message(msg, '脚本已保存到DIY文件夹，并成功在后台运行，请稍后自行查看日志')
+                    conv.cancel()
+                elif res == 'node1':
+                    await backfile(_ScriptsDir+'/'+filename)
+                    await jdbot.download_media(event.message, _ScriptsDir)
+                    if V4:
+                        cmdtext = '{} {}/{} now'.format(jdcmd,
+                                                    _ScriptsDir, filename)
                     else:
-                        backfile(f'{res}/{filename}')
-                        await jdbot.download_media(event.message, res)
-                        with open(f'{res}/{filename}', 'r', encoding='utf-8') as f:
-                            resp = f.read()
-                        if res2 == 'yes':
-                            await cronup(jdbot, conv, resp, filename, msg, SENDER, markup, res)
-                        else:
-                            await jdbot.edit_message(msg, f'{filename}已保存到{res}文件夹')
-            if cmdtext:
-                await cmd(cmdtext)
+                        cmdtext = '{} {} now'.format(jdcmd, filename)
+                    subprocess.Popen(
+                        cmdtext, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    await jdbot.edit_message(msg, '脚本已保存到scripts文件夹，并成功在后台运行，请稍后自行查看日志')
+                    conv.cancel()
+                else:
+                    await backfile(res+'/'+filename)
+                    await jdbot.download_media(event.message, res)
+                    await jdbot.edit_message(msg, filename+'已保存到'+res+'文件夹')
+            if filename == 'crontab.list' and V4:
+                cmdtext = 'crontab '+res+'/'+filename
+                subprocess.Popen(
+                    cmdtext, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                await jdbot.edit_message(msg, '定时文件已保存，并更新')
     except exceptions.TimeoutError:
         msg = await jdbot.send_message(chat_id, '选择已超时，对话已停止')
     except Exception as e:
-        await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
-        logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+        await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n'+str(e))
+        logger.error('something wrong,I\'m sorry\n'+str(e))
