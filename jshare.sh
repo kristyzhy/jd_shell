@@ -34,82 +34,7 @@ list_own_user=$dir_list_tmp/own_user.list
 list_own_add=$dir_list_tmp/own_add.list
 list_own_drop=$dir_list_tmp/own_drop.list
 
-## 需组合的环境变量列表，env_name需要和var_name一一对应
-env_name=(
-    JD_COOKIE
-    FRUITSHARECODES
-    PETSHARECODES
-    PLANT_BEAN_SHARECODES
-    DREAM_FACTORY_SHARE_CODES
-    DDFACTORY_SHARECODES
-    JDZZ_SHARECODES
-    JDJOY_SHARECODES
-    BOOKSHOP_SHARECODES
-    JD_CASH_SHARECODES
-    JDSGMH_SHARECODES
-    JDCFD_SHARECODES
-    JDHEALTH_SHARECODES
-)
-var_name=(
-    Cookie
-    ForOtherFruit
-    ForOtherPet
-    ForOtherBean
-    ForOtherDreamFactory
-    ForOtherJdFactory
-    ForOtherJdzz
-    ForOtherJoy
-    ForOtherBookShop
-    ForOtherCash
-    ForOtherSgmh
-    ForOtherCfd
-    ForOtherHealth
-)
 
-## 所有有互助码的活动，把脚本名称列在 name_js 中，对应 config.sh 中互助码后缀列在 name_config 中，中文名称列在 name_chinese 中。
-## name_js、name_config 和 name_chinese 中的三个名称必须一一对应。
-name_js=(
-    jd_fruit
-    jd_pet
-    jd_plantBean
-    jd_dreamFactory
-    jd_jdfactory
-    jd_jdzz
-    jd_crazy_joy
-    jd_bookshop
-    jd_cash
-    jd_sgmh
-    jd_cfd
-    jd_health
-)
-name_config=(
-    Fruit
-    Pet
-    Bean
-    DreamFactory
-    JdFactory
-    Jdzz
-    Joy
-    BookShop
-    Cash
-    Sgmh
-    Cfd
-    Health
-)
-name_chinese=(
-    东东农场
-    东东萌宠
-    京东种豆得豆
-    京喜工厂
-    东东工厂
-    京东赚赚
-    crazyJoy任务
-    口袋书店
-    签到领现金
-    闪购盲盒
-    京喜财富岛
-    东东健康社区
-)
 
 ## 软连接及其原始文件对应关系
 link_name=(
@@ -188,7 +113,7 @@ notify_telegram () {
 
 ## 统计用户数量
 count_user_sum () {
-    for ((i=1; i<=${SUM:-100}; i++)); do
+    for ((i=1; i<=${SUM:-900}; i++)); do
         local tmp1=Cookie$i
         local tmp2=${!tmp1}
         [[ $tmp2 ]] && user_sum=$i || break
